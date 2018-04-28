@@ -459,8 +459,9 @@ class TelescopeTransmission():
                 
 #----------------------------------------------------------------------------------
 class SpectrumSimulation(Spectrum):
-    """ SpectrumSim class used to store information and methods
-    relative to spectrum simulation.
+    """ 
+    SpectrumSim class used to store information and methods relative to spectrum simulation.
+    It inherit from the class Spectrum (in Spectractor/Spectroscopy.py)
     """
     #---------------------------------------------------------------------------
     def __init__(self,spectrum,atmosphere,telescope,disperser):
@@ -481,6 +482,7 @@ class SpectrumSimulation(Spectrum):
     #----------------------------------------------------------------------------    
     def simulate_without_atmosphere(self,lambdas):
         self.lambdas = lambdas
+        self.err=np.zeros(len(lambdas))
         self.lambda_binwidths = np.gradient(lambdas)
         all_transm = self.disperser.transmission(lambdas)
         all_transm *= self.telescope.transmission(lambdas)
@@ -685,7 +687,7 @@ def SpectractorSimGrid(filename,outputdir):
     
        
 #----------------------------------------------------------------------------------
-def SpectractorSim(filename,outputdir,lambdas,pwv=5,ozone=300,aerosols=0.05):
+def SpectractorSim(filename,outputdir,lambdas,pwv=5,ozone=300,aerosols=0.05,overwrite=True):
     
     """ SpectractorSim
     Main function to simulate several spectra 
@@ -709,20 +711,48 @@ def SpectractorSim(filename,outputdir,lambdas,pwv=5,ozone=300,aerosols=0.05):
     pressure = spectrum.header['OUTPRESS']
     temperature = spectrum.header['OUTTEMP']
     atmosphere = Atmosphere(airmass,pressure,temperature)
-    atmosphere.simulate(pwv,ozone,aerosols)    
+    atmosphere.simulate(pwv,ozone,aerosols)  
+    
     if parameters.VERBOSE:
         infostring='\n\t ========= Atmospheric simulation :  ==============='
         my_logger.info(infostring)
+        infostring="\n\t outputdir = "+outputdir
+        my_logger.info(infostring)
+        
         atmosphere.plot_transmission()   # plot all atm transp profiles
     
     # SPECTRUM SIMULATION  
     #--------------------
     spectrum_simulation = SpectrumSimulation(spectrum,atmosphere,telescope,disperser)
-    spectrum_simulation.simulate(lambdas)    
+    spectrum_simulation.simulate(lambdas)   
+    
     if parameters.VERBOSE:
         infostring='\n\t ========= Spectra simulation :  ==============='
         spectrum_simulation.plot_spectrum(nofit=True)
-
+        
+    # SAVE SPECTRUM
+    #------------------   
+    if outputdir != None:
+        
+        if parameters.VERBOSE:
+            infostring="\n\t Simulated spectrum will be saved in outputdir = "+outputdir
+            my_logger.info(infostring)
+       
+        # extract the basename : simimar as os.path.basename(file)
+        base_filename = filename.split('/')[-1]  # get "reduc_20170530_213.fits"
+        tag_filename=base_filename.split('_')[0] # get "reduc_"
+        search_str ='^%s_(.*)' % (tag_filename)  # get "^reduc_(.*)"
+        root_filename=re.findall(search_str,base_filename)[0]   # get "20170530_213.fits'
+    
+        output_filename='specsim_'+root_filename # get "spectrasim_20170530_213.fits" 
+        output_filename = os.path.join(outputdir,output_filename)
+    
+        if parameters.VERBOSE:
+            infostring='output filename ='+output_filename 
+            my_logger.info(infostring)
+        
+        spectrum_simulation.save_spectrum(output_filename,overwrite=overwrite)
+        
     return spectrum_simulation
     #--------------------------------------------------------------------------- 
     
@@ -752,8 +782,12 @@ if __name__ == "__main__":
     if opts.debug:
         parameters.DEBUG = True
         parameters.VERBOSE = True
+        
+    parameters.VERBOSE = True    
 
     filename="notebooks/fits/reduc_20170528_060_spectrum.fits"
     
     spectrum_simulation = SpectractorSim(filename,opts.output_directory,lambdas=WL,pwv=5,ozone=300,aerosols=0.05)
     #SpectractorSimGrid(filename,opts.output_directory)
+    
+    
