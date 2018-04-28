@@ -783,9 +783,9 @@ if __name__ == "__main__":
         parameters.DEBUG = True
         parameters.VERBOSE = True
         
-    parameters.VERBOSE = True    
 
     filename="notebooks/fits/reduc_20170528_060_spectrum.fits"
+    
     
     spectrum_simulation = SpectractorSim(filename,opts.output_directory,lambdas=WL,pwv=5,ozone=300,aerosols=0.05)
     #SpectractorSimGrid(filename,opts.output_directory)
