@@ -788,6 +788,7 @@ if __name__ == "__main__":
     
     
     spectrum_simulation = SpectractorSim(filename,opts.output_directory,lambdas=WL,pwv=5,ozone=300,aerosols=0.05)
+    spectrum_simulation.plot_spectrum(nofit=True)
     #SpectractorSimGrid(filename,opts.output_directory)
     
     
