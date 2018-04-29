@@ -709,7 +709,11 @@ def SpectractorSim(filename,outputdir,lambdas,pwv=5,ozone=300,aerosols=0.05,over
     # -------------------
     airmass = spectrum.header['AIRMASS']
     pressure = spectrum.header['OUTPRESS']
+    if pressure <700:  # sometimes the weather data are bad so force a reasonable pressure
+        pressure = 782.5
     temperature = spectrum.header['OUTTEMP']
+    if pressure <700:  # sometimes the weather data are bad so force a reasonable pressure
+        temperature = 10.0  # Celcius degrees
     atmosphere = Atmosphere(airmass,pressure,temperature)
     atmosphere.simulate(pwv,ozone,aerosols)  
     
