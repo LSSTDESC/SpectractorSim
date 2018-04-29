@@ -45,7 +45,9 @@ run_spectractorsim_path = os.path.dirname(__file__)
 
 home=os.getenv('HOME')
 
-path_data=os.path.join(home,'DATA/CTIODataJune2017_reduced_RG715_v2_prod1')
+#path_data=os.path.join(home,'DATA/CTIODataJune2017_reduced_RG715_v2_prod1')
+path_data=os.path.join('/sps/lsst/data/AtmosphericCalibration','CTIODataJune2017_reduced_RG715_v2_prod1')
+
 
 All_Subdirs=['data_28may17','data_29may17','data_30may17','data_31may17','data_01jun17','data_02jun17',
             'data_03jun17','data_04jun17','data_06jun17','data_08jun17','data_09jun17','data_10jun17',
