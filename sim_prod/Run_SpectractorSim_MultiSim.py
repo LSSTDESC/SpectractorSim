@@ -152,6 +152,8 @@ if __name__ == "__main__":
     else:
         print 'bad input directory selection : opts.input_directory = ',opts.input_directory    
         sys.exit()
+        
+    print 'selected dir = ', opts.input_directory , 'idx_sel_subdir=',idx_sel_subdir
     
     #### 1) Select one directory to produce the data
     #---------------------------------------------------------
@@ -182,7 +184,12 @@ if __name__ == "__main__":
     #### 4) Loop on  simulations
     
     # loop over input files
-    for idx,theinputfilename in np.ndenumerate(all_spectrafiles):   
+    for idx,theinputfilename in np.ndenumerate(all_spectrafiles): 
+        
+        if idx[0]%10==0:
+            print '============================ idx=',idx[0],' ===== file =',os.path.basename(theinputfilename),'==================='
+        
+        
         image_fn,tagname=get_image_filename(theinputfilename)
         dts=all_obs[all_obs.file==image_fn]  # exctract the info from the logbook
     
@@ -249,7 +256,7 @@ if __name__ == "__main__":
         
             # pick some samples to check
             if idx[0]%10==0:
-                print '============================ idx=',idx[0],' ===== file =',os.path.basename(theinputfilename),'==================='
+                print '\t ========= simu_mode =',simmode, '========'
                 print dts_log
                 #spectrum_simulation.plot_spectrum(nofit=True)
 
