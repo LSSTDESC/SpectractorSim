@@ -18,6 +18,8 @@ import glob
 import pandas as pd
 import numpy as np
 
+from optparse import OptionParser
+
 PATH_SPECTRACTOR='../../Spectractor'
 PATH_SPECTRACTORSIM='..'
 PATH_GMAOMERRA='../merra2'
@@ -33,6 +35,7 @@ from spectractor import *
 from spectractorsim import *
 import libMerra2 as m2
 
+run_spectractorsim_path = os.path.dirname(__file__)
 
 #-------------------------------------------------------------------------------------
 ## Configuration
@@ -48,7 +51,8 @@ All_Subdirs=['data_28may17','data_29may17','data_30may17','data_31may17','data_0
             'data_03jun17','data_04jun17','data_06jun17','data_08jun17','data_09jun17','data_10jun17',
             'data_12jun17','data_13jun17']
 
-
+All_Subdirs=np.array(All_Subdirs)
+ 
 Flag_Photometric_Nights=[False,False,True,False,False,False,False,False,False,True,False,True,True,False]
 
 
@@ -126,9 +130,30 @@ def get_image_filename(filename):
 if __name__ == "__main__":
     
     
+
+    parser = OptionParser()
+    parser.add_option("-d", "--debug", dest="debug",action="store_true",
+                      help="Enter debug mode (more verbose and plots).",default=False)
+    parser.add_option("-v", "--verbose", dest="verbose",action="store_true",
+                      help="Enter verbose (print more stuff).",default=False)
+    parser.add_option("-o", "--output_directory", dest="output_directory", default="test/",
+                      help="Write results in given output directory (default: ./tests/).")
+    parser.add_option("-i", "--input_directory", dest="input_directory", default="data_30may17",
+                      help="Define from where the reconstructued spectra will be taken (default: data_30may17).")
+    
+    (opts, args) = parser.parse_args()
+
+    
+    count =np.sum(All_Subdirs==opts.input_directory)
+    if count==1:
+        idx_sel_subdir=np.where(All_Subdirs==opts.input_directory)[0][0]
+    else:
+        print 'bad input directory selection : opts.input_directory = ',opts.input_directory    
+        sys.exit()
+    
     #### 1) Select one directory to produce the data
     #---------------------------------------------------------
-    idx_sel_subdir=2
+    #idx_sel_subdir=2
     path_spectra=os.path.join(path_data,All_Subdirs[idx_sel_subdir])
     search_string=os.path.join(path_spectra,'*.fits')
     all_spectrafiles=glob.glob(search_string)
