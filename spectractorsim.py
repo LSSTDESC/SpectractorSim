@@ -493,7 +493,11 @@ class SpectrumSimulation(Spectrum):
     def simulate(self,lambdas):
         all_transm = self.simulate_without_atmosphere(lambdas)
         all_transm *= self.atmosphere.transmission(lambdas)
-        self.data = all_transm*Factor
+        #self.data = all_transm*Factor  # we remove the factor given the units are in
+        #   Units of SEDs in flam (erg/s/cm2/nm)
+        self.data = all_transm  # we remove the factor given the units are in
+        self.err=np.zeros(len(self.data)) # need errors not be none to save in fits file
+        self.units = 'erg/s/cm$^2$/nm'
         return all_transm
     #---------------------------------------------------------------------------            
                 
@@ -755,7 +759,7 @@ def SpectractorSim(filename,outputdir,lambdas,pwv=5,ozone=300,aerosols=0.05,over
             infostring='output filename ='+output_filename 
             my_logger.info(infostring)
         
-        spectrum_simulation.save_spectrum(output_filename,overwrite=overwrite)
+        spectrum_simulation.save_spectrum(output_filename,overwrite=True)
         
     return spectrum_simulation
     #--------------------------------------------------------------------------- 
@@ -779,6 +783,8 @@ if __name__ == "__main__":
                       help="Enter verbose (print more stuff).",default=False)
     parser.add_option("-o", "--output_directory", dest="output_directory", default="test/",
                       help="Write results in given output directory (default: ./tests/).")
+   
+    
     (opts, args) = parser.parse_args()
 
     parameters.VERBOSE = opts.verbose
