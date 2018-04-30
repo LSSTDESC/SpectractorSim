@@ -111,7 +111,9 @@ parameters.DEBUG = False
 
 def get_image_filename(filename):
     """
-    Retretrieve the image name from the spectrum filename
+    Retretrieve the 
+    - image filename name from the spectrum
+    - the tagname
     """
     base_filename=os.path.basename(filename)
     dir_filename=os.path.dirname(filename)
@@ -191,6 +193,10 @@ if __name__ == "__main__":
         
         
         image_fn,tagname=get_image_filename(theinputfilename)
+        
+        theoutputfilename='specsim_'+tagname+'_spectrum'+'.fits'
+        
+        
         dts=all_obs[all_obs.file==image_fn]  # exctract the info from the logbook
     
         #extract info from the logbook
@@ -244,19 +250,21 @@ if __name__ == "__main__":
                 print 'unknown sim mode :',simmode
         
             # simulate the spectrum
-            spectrum_simulation = SpectractorSim(theinputfilename,outputdir,lambdas=WL,pwv=pwv_tosim,ozone=ozone_tosim,aerosols=aer_tosim)
+            theoutputfullfilename=os.path.join(outputdir,theoutputfilename)
+            if os.path.exists(theoutputfullfilename) and os.path.getsize(theoutputfullfilename)>MINFILESIZE:   
+                print "skip simulation of ", theoutputfilename,' already existing in ',outputdir,' with size ',os.path.getsize(theoutputfullfilename)
+            else:
+                spectrum_simulation = SpectractorSim(theinputfilename,outputdir,lambdas=WL,pwv=pwv_tosim,ozone=ozone_tosim,aerosols=aer_tosim)
             
-            #save simulation conditions in a logfile
-            simu_log={'time': [thetime_ctio],'object':[theobject_ctio],'airmass': [theairmass_ctio],
-                  'P':[thepressure_tosim],'T':[thetemperature_tosim],
-                 'pwv':[pwv_tosim],'ozone':[ozone_tosim],'aer':[aer_tosim],'clouds':[clouds_tosim],'simumode':[simmode]}
-            filename_log='log_simu'+'_'+tagname+'.csv'
-            dts_log=pd.DataFrame(data=simu_log)
-            dts_log.to_csv(os.path.join(outputdir,filename_log))
+                #save simulation conditions in a logfile
+                simu_log={'time': [thetime_ctio],'object':[theobject_ctio],'airmass': [theairmass_ctio],'P':[thepressure_tosim],'T':[thetemperature_tosim], 'pwv':[pwv_tosim],'ozone':[ozone_tosim],'aer':[aer_tosim],'clouds':[clouds_tosim],'simumode':[simmode]}
+                filename_log='log_simu'+'_'+tagname+'_spectrum'+'.csv'
+                dts_log=pd.DataFrame(data=simu_log)
+                dts_log.to_csv(os.path.join(outputdir,filename_log))
         
-            # pick some samples to check
-            if idx[0]%10==0:
-                print '\t ========= simu_mode =',simmode, '========'
-                print dts_log
-                #spectrum_simulation.plot_spectrum(nofit=True)
+                # pick some samples to check
+                if idx[0]%10==0:
+                    print '\t ========= simu_mode =',simmode, '========'
+                    print dts_log
+                    #spectrum_simulation.plot_spectrum(nofit=True)
 
