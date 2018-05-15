@@ -434,19 +434,32 @@ class TelescopeTransmission():
         self.transmission=lambda x: self.qe(x)*self.to(x)*(self.tm(x)**2)*self.tf(x)     
         return self.transmission
     #---------------------------------------------------------------------------    
-    def plot_transmission(self,xlim=None):
+    def plot_transmission(self,xlim=None,scale='lin'):
         """
         plot_transmission()
             plot the various transmissions of the instrument
         """
         plt.figure()
-        plt.plot(WL,self.qe(WL),'b-',label='qe')
-        plt.plot(WL,self.to(WL),'g-',label='othr')
-        plt.plot(WL,self.tm(WL),'y-',label='mirr')
-        plt.plot(WL,self.tf(WL),'k-',label='filt')
-        plt.plot(WL,self.tfr(WL),'k:',label='RG715')
-        plt.plot(WL,self.tfb(WL),'k--',label='FGB37')
-        plt.plot(WL,self.transmission(WL),'r-',lw=2,label='tot')
+        if scale=='lin':
+            plt.plot(WL,self.qe(WL),'b-',label='qe')
+            plt.plot(WL,self.to(WL),'g-',label='othr')
+            plt.plot(WL,self.tm(WL),'y-',label='mirr')
+            plt.plot(WL,self.tf(WL),'k-',label='filt')
+            plt.plot(WL,self.tfr(WL),'k:',label='RG715')
+            plt.plot(WL,self.tfb(WL),'k--',label='FGB37')
+            plt.plot(WL,self.transmission(WL),'r-',lw=2,label='tot')
+            plt.ylabel("Transmission")
+        else:
+            plt.plot(WL,2.5*np.log10(self.qe(WL)),'b-',label='qe')
+            plt.plot(WL,2.5*np.log10(self.to(WL)),'g-',label='othr')
+            plt.plot(WL,2.5*np.log10(self.tm(WL)),'y-',label='mirr')
+            plt.plot(WL,2.5*np.log10(self.tf(WL)),'k-',label='filt')
+            plt.plot(WL,2.5*np.log10(self.tfr(WL)),'k:',label='RG715')
+            plt.plot(WL,2.5*np.log10(self.tfb(WL)),'k--',label='FGB37')
+            plt.plot(WL,2.5*np.log10(self.transmission(WL)),'r-',lw=2,label='tot')
+            plt.ylim(-4.,1.)
+            plt.ylabel("Transmission (mag)")
+            
         plt.legend()
         plt.grid()
         plt.xlabel("$\lambda$ [nm]")
