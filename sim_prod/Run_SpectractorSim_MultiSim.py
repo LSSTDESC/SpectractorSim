@@ -8,6 +8,7 @@
 # - author Sylvie Dagoret-Campagne
 # - date : April 05th 2018
 # - update : April 29th 2018
+# - update : May 16th 2018
 # 
 
 # # SpectractorSim Launcher
@@ -45,8 +46,8 @@ run_spectractorsim_path = os.path.dirname(__file__)
 
 home=os.getenv('HOME')
 
-#path_data=os.path.join(home,'DATA/CTIODataJune2017_reduced_RG715_v2_prod1')
-path_data=os.path.join('/sps/lsst/data/AtmosphericCalibration','CTIODataJune2017_reduced_RG715_v2_prod1')
+path_data=os.path.join(home,'DATA/CTIODataJune2017_reduced_RG715_v2_prod1')
+#path_data=os.path.join('/sps/lsst/data/AtmosphericCalibration','CTIODataJune2017_reduced_RG715_v2_prod1')
 
 
 All_Subdirs=['data_28may17','data_29may17','data_30may17','data_31may17','data_01jun17','data_02jun17',
@@ -170,7 +171,7 @@ if __name__ == "__main__":
     #----------------------
 
     # defines the different output directories corresponding to each simulation mode
-    topoutputdir=os.path.join("./CTIODataJune2017_reduced_RG715_v2_prod1_SimSpectra",All_Subdirs[idx_sel_subdir])
+    topoutputdir=os.path.join("./CTIODataJune2017_reduced_RG715_v2_prod1_SimSpectra_v2",All_Subdirs[idx_sel_subdir])
     all_outputdirs=[]
     for simmode in Sim_Modes:
         outputdir=os.path.join(topoutputdir,simmode)

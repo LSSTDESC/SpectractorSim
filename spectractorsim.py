@@ -500,7 +500,12 @@ class SpectrumSimulation(Spectrum):
         all_transm = self.disperser.transmission(lambdas)
         all_transm *= self.telescope.transmission(lambdas)
         all_transm *= self.target.sed(lambdas)
-        all_transm *= self.lambdas*self.lambda_binwidths         
+        # We have to suppress this if calculate in erg/cm2/nm
+        #all_transm *= self.lambdas*self.lambda_binwidths
+
+        #print 'self.lambdas*self.lambda_binwidths=',self.lambdas*self.lambda_binwidths 
+        #print 'self.lambdas=',self.lambdas
+        #print 'self.lambda_binwidths=',self.lambda_binwidths 
         return all_transm
     #----------------------------------------------------------------------------    
     def simulate(self,lambdas):
@@ -805,9 +810,12 @@ if __name__ == "__main__":
     if opts.debug:
         parameters.DEBUG = True
         parameters.VERBOSE = True
-        
+      
+    parameters.DEBUG = True
+    parameters.VERBOSE = True
 
     filename="notebooks/fits/reduc_20170528_060_spectrum.fits"
+    filename="/Users/dagoret/DATA/CTIODataJune2017_reduced_RG715_v2_prod1/data_30may17/reduc_20170530_060_spectrum.fits"
     
     
     spectrum_simulation = SpectractorSim(filename,opts.output_directory,lambdas=WL,pwv=5,ozone=300,aerosols=0.05)

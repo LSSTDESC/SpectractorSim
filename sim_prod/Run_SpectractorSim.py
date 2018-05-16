@@ -49,7 +49,7 @@ all_spectrafiles=glob.glob(search_string)
 all_spectrafiles=sorted(all_spectrafiles)
 
 # output directory
-outputdir=os.path.join("./simspectra",All_Subdirs[idx_sel_subdir])
+outputdir=os.path.join("./simspectra_v2",All_Subdirs[idx_sel_subdir])
 ensure_dir(outputdir)
 
 
